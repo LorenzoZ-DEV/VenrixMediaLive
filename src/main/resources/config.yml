@@ -1,0 +1,74 @@
+# =====================================================================
+#  VenrixMediaLive - config.yml
+#  Tutte le stringhe con simboli o escape sono tra doppi apici.
+#  I codici colore usano il formato legacy hex: &x&r&r&g&g&b&b
+# =====================================================================
+
+database:
+  host: "127.0.0.1"
+  port: 3306
+  name: "venrixmc"
+  user: "venrix"
+  password: "changeme"
+  # Dimensione del pool HikariCP (usata anche per l'executor asincrono del plugin)
+  pool-size: 10
+  # Timeout di connessione in millisecondi
+  connection-timeout: 10000
+
+live:
+  # Il badge mostrato in tablist, nei messaggi e nei placeholder.
+  #
+  # Oltre ai colori legacy e' supportato il tag sprite (object component, MC 1.21.9+):
+  #   <sprite:ATLAS:SPRITE>
+  # Il default usa l'icona vanilla animata "trial_available" dell'atlas minecraft:gui:
+  # 8x8 px, 6 frame, gia' viola di suo (#8D68E0 / #BCA4EC) - nessuna resource pack.
+  # Gli apici attorno ai due valori servono a TAB (l'atlas contiene ":"): MiniMessage
+  # li accetta allo stesso modo, quindi la stessa stringa vale per chat e tablist.
+  #
+  # Il colore scritto PRIMA del tag fa da tinta allo sprite: &f (bianco) lo lascia
+  # con i suoi colori originali. Per un viola diverso metti un hex al posto di &f,
+  # ad esempio &x&9&1&4&6&F&F (viola Twitch).
+  #
+  # Alternative senza sprite (utili per client < 1.21.9):
+  #   symbol: "&x&2&C&C&D&B&1●"   -> U+25CF, carattere del font vanilla
+  #   symbol: "&x&2&C&C&D&B&1"   -> glifo U+E001 della resource pack (vedi sotto)
+  symbol: '&f<sprite:"minecraft:gui":"minecraft:icon/trial_available">'
+
+  # Cooldown del broadcast di /live publish, in secondi (default 10 minuti).
+  cooldown-seconds: 600
+
+  # Domini consentiti per /live publish. Il link deve iniziare con https://
+  # e il suo host deve corrispondere (o essere un sottodominio) di una di queste voci.
+  allowed-domains:
+    - "twitch.tv"
+    - "youtube.com"
+    - "youtu.be"
+    - "tiktok.com"
+
+# ---------------------------------------------------------------------
+#  Integrazione TAB (NEZNAMY) - completamente automatica.
+#  Il pallino viene AGGIUNTO al prefix/suffix gia' configurato in TAB,
+#  senza sovrascriverlo e senza toccare la config di TAB.
+#  Richiede che in TAB la funzione "tablist-name-formatting" sia attiva.
+# ---------------------------------------------------------------------
+tab:
+  enabled: true
+  # SUFFIX -> il pallino va dopo il nome | PREFIX -> il pallino va prima del nome
+  position: "SUFFIX"
+  # Separatore inserito tra il valore originale e il pallino
+  separator: " "
+
+# ---------------------------------------------------------------------
+#  Resource pack (OPZIONALE, disattivata di default).
+#  La pack e' gia' pronta e mappa U+E001 nel font minecraft:default:
+#  il plugin NON la genera. Se la abiliti, imposta live.symbol a "".
+#  Se enabled = false non viene inviata nessuna pack e i listener
+#  relativi non vengono nemmeno registrati.
+# ---------------------------------------------------------------------
+resourcepack:
+  enabled: false
+  url: ""
+  sha1: "9d0e5ae6236fc2fb4cf9112c7d34721614f44fc6"
+  # Se true e il giocatore rifiuta la pack (o il download fallisce) viene espulso.
+  required: false
+  prompt: "&x&2&C&C&D&B&1VENRIXMC &8| &7Scarica la resource pack per vedere i badge live"

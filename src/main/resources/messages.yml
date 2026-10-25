@@ -1,0 +1,48 @@
+# =====================================================================
+#  VenrixMediaLive - messages.yml
+#  Colori: formato legacy hex &x&r&r&g&g&b&b (oltre ai classici &a, &7, ...)
+#  Sprite: <sprite:ATLAS:SPRITE> inserisce un'icona vanilla (MC 1.21.9+),
+#          es. <sprite:"minecraft:gui":"minecraft:icon/trial_available">.
+#          Metti &f subito prima del tag per lasciare allo sprite i suoi colori.
+#  Token disponibili in tutti i messaggi:
+#    {prefix}       -> il prefisso qui sotto
+#    {live_symbol}  -> il simbolo configurato in config.yml (live.symbol)
+#  Token specifici: {player}, {url}, {time}, {domains}
+# =====================================================================
+
+prefix: "&8[&x&2&C&C&D&B&1VENRIX&fMC&8] &r"
+
+live:
+  enabled: "{prefix}&7Modalita' live &aattivata&7. {live_symbol}&7 e' ora visibile accanto al tuo nome."
+  disabled: "{prefix}&7Modalita' live &cdisattivata&7. Il badge e' stato rimosso."
+  already-enabled: "{prefix}&7Hai gia' la modalita' live attiva. Usa &f/live off &7per disattivarla."
+  already-disabled: "{prefix}&7La modalita' live non e' attiva."
+
+publish:
+  # Messaggio privato di conferma a chi esegue il comando
+  success: "{prefix}&7Link della live salvato: &x&2&C&C&D&B&1{url}"
+  # Broadcast globale: {url} viene reso cliccabile automaticamente
+  broadcast: "\n{prefix}{live_symbol} &f{player} &7e' in diretta! &8-> &x&2&C&C&D&B&1&n{url}\n"
+  # Testo dell'hover sul link del broadcast
+  hover: "&7Clicca per aprire la live"
+  # Cooldown: {time} = tempo rimanente (es. \"4m 12s\")
+  cooldown: "{prefix}&cDevi attendere &f{time} &cprima di annunciare di nuovo la tua live."
+  invalid-link: "{prefix}&cLink non valido. Deve iniziare con &fhttps:// &ced essere un URL corretto."
+  domain-not-allowed: "{prefix}&cDominio non consentito. Piattaforme ammesse: &f{domains}"
+  usage: "{prefix}&7Uso corretto: &f/live publish <link>"
+
+general:
+  no-permission: "{prefix}&cNon hai il permesso per eseguire questo comando."
+  players-only: "{prefix}&cQuesto comando puo' essere usato solo da un giocatore."
+  usage: "{prefix}&7Comandi disponibili: &f/live on&7, &f/live off&7, &f/live publish <link>"
+  database-error: "{prefix}&cErrore durante il salvataggio dei dati. Contatta lo staff."
+  not-ready: "{prefix}&cIl database non e' ancora pronto, riprova tra qualche secondo."
+
+reload:
+  success: "{prefix}&aConfigurazione ricaricata correttamente."
+  no-permission: "{prefix}&cNon hai il permesso per ricaricare la configurazione."
+
+resourcepack:
+  # Kick usati solo se resourcepack.required = true in config.yml
+  kick-declined: "&x&2&C&C&D&B&1VENRIXMC\n\n&7Devi accettare la resource pack per giocare.\n&7Riattiva le pack del server e riprova.\n"
+  kick-failed: "&x&2&C&C&D&B&1VENRIXMC\n\n&7Download della resource pack non riuscito.\n&7Controlla la tua connessione e riprova.\n"

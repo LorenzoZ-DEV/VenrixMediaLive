@@ -1,0 +1,34 @@
+# VenrixMediaLive - VENRIXMC
+# NOTA: si usa plugin.yml (non paper-plugin.yml) perche' con il nuovo loader di Paper
+# le classi dell'API di TAB non sarebbero visibili al classloader del plugin.
+name: VenrixMediaLive
+version: '${version}'
+main: it.venrix.medialive.VenrixMediaLive
+api-version: '1.21'
+load: POSTWORLD
+prefix: VenrixMediaLive
+description: "Sistema live/media per il network VENRIXMC: pallino in tablist, publish del link e placeholder."
+authors: [ "Lorenzzzzzz" ]
+contributors: [ "VenrixMC" ]
+website: "https://venrixmc.it"
+
+# Integrazioni opzionali: il plugin funziona anche senza di esse.
+softdepend:
+  - PlaceholderAPI
+  - TAB
+
+# Driver JDBC scaricato a runtime dal library loader di Paper.
+libraries:
+  - org.mariadb.jdbc:mariadb-java-client:3.5.3
+
+# I comandi sono registrati dinamicamente da ACF, qui dichiariamo solo i permessi.
+permissions:
+  venrixmedialive.use:
+    description: "Permette l'uso di /live on, /live off e /live publish"
+    default: true
+  venrixmedialive.bypass.cooldown:
+    description: "Permette di saltare il cooldown di /live publish"
+    default: op
+  venrixmedialive.reload:
+    description: "Permette l'uso di /live reload"
+    default: op

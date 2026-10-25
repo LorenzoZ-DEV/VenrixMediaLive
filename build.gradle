@@ -1,0 +1,96 @@
+plugins {
+    id 'java'
+    id 'com.gradleup.shadow' version '9.1.0'
+    id 'xyz.jpenilla.run-paper' version '3.1.0'
+}
+
+group = 'it.venrix'
+version = '1.0.0'
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+}
+
+repositories {
+    mavenCentral()
+    // Paper API
+    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
+    // ACF (Aikar Command Framework)
+    maven { url = 'https://repo.aikar.co/content/groups/aikar/' }
+    // PlaceholderAPI
+    maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
+    // TAB API (NEZNAMY)
+    maven { url = 'https://jitpack.io' }
+}
+
+dependencies {
+    // ---- Fornite dal server / da altri plugin: NON vanno nel jar ----
+    compileOnly 'io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT'
+    compileOnly 'me.clip:placeholderapi:2.11.6'
+    // L'API di TAB non va inclusa nel jar e non va rilocata: il plugin TAB la fornisce a runtime.
+    compileOnly 'com.github.NEZNAMY:TAB-API:6.1.2'
+    // Il driver MariaDB viene scaricato da Paper tramite la sezione "libraries" di plugin.yml
+    compileOnly 'org.mariadb.jdbc:mariadb-java-client:3.5.3'
+
+    // ---- Incluse e rilocate nel jar dallo shadow plugin ----
+    implementation 'co.aikar:acf-paper:0.5.1-SNAPSHOT'
+    // slf4j-api e' gia' fornito dal server: escluso per non gonfiare il jar
+    implementation('com.zaxxer:HikariCP:5.1.0') {
+        exclude group: 'org.slf4j'
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
+    options.compilerArgs << '-Xlint:deprecation'
+}
+
+tasks.named('processResources') {
+    def props = [version: project.version]
+    inputs.properties(props)
+    filteringCharset = 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand(props)
+    }
+}
+
+// Il jar "sottile" non viene distribuito: gli lasciamo un nome diverso cosi'
+// non va in conflitto con l'output di shadowJar.
+tasks.named('jar') {
+    archiveClassifier.set('thin')
+}
+
+tasks.named('shadowJar') {
+    archiveClassifier.set('')
+
+    // Riloca solo ACF e HikariCP: evita conflitti con altri plugin che usano le stesse librerie.
+    relocate 'co.aikar.commands', 'it.venrix.medialive.libs.acf'
+    relocate 'co.aikar.locales', 'it.venrix.medialive.libs.locales'
+    relocate 'com.zaxxer.hikari', 'it.venrix.medialive.libs.hikari'
+
+    // L'API di TAB non deve MAI finire nel jar ne' essere rilocata:
+    // i riferimenti devono puntare alle classi caricate dal plugin TAB.
+    dependencies {
+        exclude(dependency('com.github.NEZNAMY:.*:.*'))
+        exclude(dependency('org.slf4j:.*:.*'))
+    }
+    exclude 'me/neznamy/**'
+
+    // Pulizia metadati inutili delle dipendenze shadate
+    exclude 'META-INF/maven/**'
+    exclude 'META-INF/*.SF'
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+
+    mergeServiceFiles()
+}
+
+tasks.named('build') {
+    dependsOn tasks.named('shadowJar')
+}
+
+tasks.named('runServer') {
+    minecraftVersion('1.21.11')
+    jvmArgs('-Xms2G', '-Xmx2G')
+}
